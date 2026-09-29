@@ -586,6 +586,9 @@ void movement()
 {
 	int x = leftstickX-128;
 	int y = leftstickY-128;
+	int omega;
+	int R = R2;
+	int L = L2;
 	if(x>0)
 	{
 
@@ -623,45 +626,61 @@ void movement()
 		FRPWMy = 0;
 		FLPWMy = 0;
 	}
-	motor1(RRPWMx,RLPWMx,RRPWMy,RLPWMy);
-	motor2(LRPWMx,LLPWMx,LRPWMy,LLPWMy);
-	motor3(FRPWMx,FLPWMx,FRPWMy,FLPWMy);
-}
-
-void motor1(double x1,double x2, double y1,double y2)
-{
-	if(x1+x2+y1+y2>0)
+	if(R>L)
 	{
-		TIM3->CCR1 = (x1+x2+y1+y2)*
+		omega = R-L;
+		omega = map(omega,0,255,0,128);
 	}
 	else
 	{
-
+		omega = R - L;
+		omega = map(omega,-255,0,-128,0);
 	}
+	motor1(RRPWMx,RLPWMx,RRPWMy,RLPWMy,omega);
+	motor2(LRPWMx,LLPWMx,LRPWMy,LLPWMy,omega);
+	motor3(FRPWMx,FLPWMx,FRPWMy,FLPWMy,omega);
 }
 
-void motor2(double x1,double x2, double y1,double y2)
+void motor1(double x1,double x2, double y1,double y2,double z)
 {
-	if(x1+x2+y1+y2>0)
+	if(x1+x2+y1+y2+z>0)
 	{
-
+		TIM3->CCR1 = (x1+x2+y1+y2+z)*10/128;
+		TIM3->CCR2 = 0;
 	}
 	else
 	{
-
+		TIM3->CCR1 = 0;
+		TIM3->CCR2 = -(x1+x2+y1+y2+z)*10/128;
 	}
 }
 
-void motor3(double x1,double x2, double y1,double y2)
+void motor2(double x1,double x2, double y1,double y2,double z)
 {
-	if(x1+x2+y1+y2>0)
-	{
+	if(x1+x2+y1+y2+z>0)
+		{
+			TIM3->CCR4 = (x1+x2+y1+y2+z)*10/128;
+			TIM3->CCR3 = 0;
+		}
+		else
+		{
+			TIM3->CCR4 = 0;
+			TIM3->CCR3 = -(x1+x2+y1+y2+z)*10/128;
+		}
+}
 
-	}
-	else
-	{
-
-	}
+void motor3(double x1,double x2, double y1,double y2,double z)
+{
+	if(x1+x2+y1+y2+z>0)
+		{
+			TIM9->CCR1 = (x1+x2+y1+y2+z)*10/128;
+			TIM9->CCR2 = 0;
+		}
+		else
+		{
+			TIM9->CCR1 = 0;
+			TIM9->CCR2 = -(x1+x2+y1+y2+z)*10/128;
+		}
 }
 /* USER CODE END 4 */
 
