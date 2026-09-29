@@ -69,7 +69,13 @@ static void MX_TIM9_Init(void);
 void MX_USB_HOST_Process(void);
 
 /* USER CODE BEGIN PFP */
-
+void update1();
+double degree_to_rad(double i);
+double rad_to_degree(double i);
+void movement();
+void motor1(double x1,double x2, double y1,double y2,double z);
+void motor2(double x1,double x2, double y1,double y2,double z);
+void motor3(double x1,double x2, double y1,double y2,double z);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -561,6 +567,10 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
+long map(long x, long in_min, long in_max, long out_min, long out_max) {
+  return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+}
+
 void update1()
   {
 	buttons = rxdata[0];
@@ -593,17 +603,17 @@ void movement()
 	{
 
 		RRPWMx = 0;                        // RIGHT motor RPWM
-		RLPWMx = x*sec(degree_to_rad(60)); // RIGHT motor LPWM
+		RLPWMx = x/cos(degree_to_rad(60)); // RIGHT motor LPWM
 		LRPWMx = 0;                        // LEFT motor RPWM
-		LLPWMx = x*sec(degree_to_rad(60)); // LEFT motor LPWM
+		LLPWMx = x/cos(degree_to_rad(60)); // LEFT motor LPWM
 		FRPWMx = x;                        // FRONT motor RPWM
 		FLPWMx = 0;                        // FRONT motor LPWM
 	}
 	else
 	{
-		RRPWMx = -x*sec(degree_to_rad(60)); // RIGHT motor RPWM
+		RRPWMx = -x/cos(degree_to_rad(60)); // RIGHT motor RPWM
 		RLPWMx = 0;                        // RIGHT motor LPWM
-		LRPWMx = -x*sec(degree_to_rad(60)); // LEFT motor RPWM
+		LRPWMx = -x/cos(degree_to_rad(60)); // LEFT motor RPWM
 		LLPWMx = 0;                        // LEFT motor LPWM
 		FRPWMx = 0;                        // FRONT motor RPWM
 		FLPWMx = -x;                        // FRONT motor LPWM
@@ -611,18 +621,18 @@ void movement()
 	if(y>0)
 	{
 		RRPWMy = 0;
-		RLPWMy = y*cosec(degree_to_rad(60));
-		LRPWMy = y*cosec(degree_to_rad(60));
+		RLPWMy = y/sin(degree_to_rad(60));
+		LRPWMy = y/sin(degree_to_rad(60));
 		LLPWMy = 0;
 		FRPWMy = 0;
 		FLPWMy = 0;
 	}
 	else
 	{
-		RRPWMy = -y*cosec(degree_to_rad(60));
+		RRPWMy = -y/sin(degree_to_rad(60));
 		RLPWMy = 0;
 		LRPWMy = 0;
-		LLPWMy = -y*cosec(degree_to_rad(60));
+		LLPWMy = -y/sin(degree_to_rad(60));
 		FRPWMy = 0;
 		FLPWMy = 0;
 	}
