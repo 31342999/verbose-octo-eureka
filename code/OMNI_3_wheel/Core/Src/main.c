@@ -140,7 +140,7 @@ int main(void)
   MX_TIM3_Init();
   MX_TIM9_Init();
   /* USER CODE BEGIN 2 */
-
+  HAL_UART_Receive_IT(&huart2, rxdata, 7);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -151,7 +151,7 @@ int main(void)
     MX_USB_HOST_Process();
 
     /* USER CODE BEGIN 3 */
-    update1();
+    movement();
 
   }
   /* USER CODE END 3 */
@@ -571,7 +571,7 @@ long map(long x, long in_min, long in_max, long out_min, long out_max) {
   return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
 
-void update1()
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
   {
 	buttons = rxdata[0];
 	rightstickX = rxdata[1];
@@ -580,8 +580,8 @@ void update1()
 	leftstickY = rxdata[4];
 	R2 = rxdata[5];
 	L2 = rxdata[6];
+	HAL_UART_Receive_IT(&huart2, rxdata, 7);
   }
-
 double degree_to_rad(double i)
 {
 	return i*M_PI/180;
